@@ -6,6 +6,7 @@ def convert_to_binary_le1(Input_Byte):
     bits = np.array([int(bit) for bit in bin(Input_Byte)[2:].zfill(8)][::-1])
     return bits
 
+#le1より早い
 def convert_to_binary_le2(Input_Byte):
     bits = np.array([(Input_Byte>>i) & 1 for i in range(8)])
     return bits
