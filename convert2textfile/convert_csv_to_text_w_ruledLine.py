@@ -1,4 +1,5 @@
 import pandas as pd
+import pyperclip
 
 def convert_csv_to_text_w_ruledLine(csv_file):
     # CSVファイルを読み込む
@@ -23,3 +24,6 @@ converted_text = convert_csv_to_text_w_ruledLine(csv_file)
 
 # 変換結果を表示する
 print(converted_text)
+
+# 変換結果をクリップボードにコピーする
+pyperclip.copy(converted_text)
