@@ -1,0 +1,33 @@
+  {
+    "message_type": "Certificate",
+    "certificates": [
+      {
+        "certificate_data": "00000001",
+        "issuer": "Root CA",
+        "subject": "example.com",
+        "validity": {
+          "start_date": "2023-01-01",
+          "end_date": "2024-01-01"
+        }
+      },
+      {
+        "certificate_data": "00000002",
+        "issuer": "Intermediate CA",
+        "subject": "example.com",
+        "validity": {
+          "start_date": "2023-01-01",
+          "end_date": "2024-01-01"
+        }
+      },
+      {
+        "certificate_data": "00000003",
+        "issuer": "End Entity",
+        "subject": "example.com",
+        "validity": {
+          "start_date": "2023-01-01",
+          "end_date": "2024-01-01"
+        }
+      }
+    ]
+  }
+  
