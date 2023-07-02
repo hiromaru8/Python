@@ -1,0 +1,26 @@
+@startuml cert
+
+class Validity {
+  - start_date: datetime
+  - end_date: datetime
+  + __init__(start_date: datetime, end_date: datetime): None
+}
+
+class CertificateElement {
+  - certificate_data: str
+  - issuer: str
+  - subject: str
+  - validity: Validity
+  + __init__(certificate_data: str, issuer: str, subject: str, validity: Validity): None
+}
+
+class Certificate {
+  - message_type: str
+  - certificates: List[CertificateElement]
+  + __init__(message_type: str, certificates: List[CertificateElement]): None
+}
+
+Validity --o CertificateElement
+CertificateElement --o Certificate
+
+@enduml cert
