@@ -33,7 +33,7 @@ class DllWrapper:
         """
         try:
             if not self.__loaded:
-                self.dll = ctypes.WinDLL(self.dll_path)
+                #self.dll = ctypes.WinDLL(self.dll_path)
                 self.__loaded = True
                 print("DLL loaded successfully.")
 
@@ -42,15 +42,17 @@ class DllWrapper:
 
             else:
                 print("DLL is already loaded.")
-            
+
             return 0
                 
         except Exception as e:
             print(f"Failed to load DLL: {str(e)}")
+
             return -1
     
     def get_loaded_dll(self):
         return self.__loaded
+
 
     def execute_function(self, function_name, *args):
         """
@@ -72,6 +74,9 @@ class DllWrapper:
                 raise Exception("DLL is not loaded.")
         except Exception as e:
             print(f"Failed to execute function '{function_name}': {str(e)}")
+
+
+
     def __del__(self):
         """
         オブジェクトが破棄される際に呼び出されるデストラクタです。
@@ -98,27 +103,22 @@ else:
 if(0!=dll_wrapper.load_dll()):
     print("error")
 
-
-
 if dll_wrapper.get_loaded_dll():
     print('DLL is already loaded')
 else:
     print('DLL is not loaded')
 
 
+import gc
+#del dll_wrapper
+del DllWrapper
+gc.collect()
+
+import time
+time.sleep(5)
+print("hoge")
+
 
 """
-dll_wrapper.load_dll()
-dll_path = "aaaj"#input("Enter DLL path: ")
-
-dll_wrapper1 = DllWrapper(dll_path)
-
-dll_wrapper1.load_dll()
-
-
-print(dll_wrapper1.dll_path)
-
-
-
 #dll_wrapper.execute_function("function_name", arg1, arg2)
 """
