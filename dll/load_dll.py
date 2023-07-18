@@ -4,22 +4,28 @@ class DllWrapper:
     """
     DLLを読み込み、関数を実行するためのシングルトンクラスです。
     """
-    #private
+    #pseudo private
     __instance = None  # クラス変数 _instance はインスタンスの一意性を保証するための変数です
     __loaded = False  # クラス変数 _loaded はDLLの読み込み状態を示すフラグです
 
     def __new__(cls, dll_path):
-        # インスタンスが
-        # 存在しない場合は新規作成し、
-        # 存在する場合は既存のインスタンスを返す
+        """
+        If the instance does not exist, create a new one;\n
+        if it exists, return the existing instance.
+        """
+        #print(cls.__instance)
         if not cls.__instance:
-            cls.__instance = super().__new__(cls)
+            cls.__instance = super().__new__(cls) 
+            print("new instance")
+        else:
+            print("instance is already generated")
         return cls.__instance
 
     
     def __init__(self, dll_path):
-        # 初回インスタンス生成時のみ、
-        # DLLパスを設定およびDLLオブジェクトを初期化
+        """初回インスタンス生成時のみDLLパスを設定およびDLLオブジェクトを初期化
+        """
+
         if not self.__loaded:
             self.dll_path = dll_path
             self.dll = None
@@ -27,18 +33,18 @@ class DllWrapper:
 
     def load_dll(self):
         """
-        DLLを読み込むメソッド
-        初回の呼び出し時のみDLLを読み込む。
-        ２回目以降は読み込まれない。
+        Method for loading DLL.\n
+        - Load the DLL only during the first call.\n
+        - It will not be loaded again from the second call onwards.\n
+        Return value\n
+        - 0 : Normal responce\n
+        - -1: error
         """
         try:
             if not self.__loaded:
                 #self.dll = ctypes.WinDLL(self.dll_path)
                 self.__loaded = True
                 print("DLL loaded successfully.")
-
-                #下記に関数の引数と戻り値の型を指定する。
-                #......
 
             else:
                 print("DLL is already loaded.")
@@ -51,10 +57,18 @@ class DllWrapper:
             return -1
     
     def get_loaded_dll(self):
+        """
+        Method that returns whether the DLL is loaded\n
+        Args:
+            none
+        Returns:
+            True: DLL is already loaded\n
+            False:  DLL is not loaded\n
+        """
         return self.__loaded
 
 
-    def execute_function(self, function_name, *args):
+    def execute_intFunction(self, function_name, *args):
         """
         関数を実行するメソッド
         :param function_name: 実行する関数の名前
@@ -90,35 +104,77 @@ class DllWrapper:
 
 
 
-dll_path = "aaa"#input("Enter DLL path: ")
 
-dll_wrapper = DllWrapper(dll_path)
+class SubDllWrapper1(DllWrapper):
+    """
+    専用のDLLを読み込み、関数を実行するためのサブクラスです。
+    """
+    #pseudo private
+    __instance = None  # クラス変数 _instance はインスタンスの一意性を保証するための変数です
+    __loaded = False  # クラス変数 _loaded はDLLの読み込み状態を示すフラグです
 
+    def __new__(cls, dll_path):
+        """
+        Override the method(__new__) of the parent class.
+        If the instance does not exist, create a new one;\n
+        if it exists, return the existing instance.
+        """
+        #print(cls.__instance)
+        if not cls.__instance:
+            cls.__instance = object.__new__(cls) 
+            print("new instance")
+        else:
+            print("instance is already generated")
+        return cls.__instance
 
-if dll_wrapper.get_loaded_dll():
-    print('DLL is already loaded')
-else:
-    print('DLL is not loaded')
     
-if(0!=dll_wrapper.load_dll()):
-    print("error")
-
-if dll_wrapper.get_loaded_dll():
-    print('DLL is already loaded')
-else:
-    print('DLL is not loaded')
-
-
-import gc
-#del dll_wrapper
-del DllWrapper
-gc.collect()
-
-import time
-time.sleep(5)
-print("hoge")
+    def __init__(self, dll_path):
+        """
+        初回インスタンス生成時のみDLLパスを設定およびDLLオブジェクトを初期化
+        """
+        if not self.__loaded:
+            self.dll_path = dll_path
+            self.dll = None
 
 
-"""
-#dll_wrapper.execute_function("function_name", arg1, arg2)
-"""
+
+class SubDllWrapper2(DllWrapper):
+    """
+    専用のDLLを読み込み、関数を実行するためのサブクラスです。
+    """
+
+
+
+if __name__ == "__main__":
+    dll_path = "aaa"#input("Enter DLL path: ")
+    dll_path1 = "aaa"#input("Enter DLL path: ")
+    dll_path2 = "bbb"#input("Enter DLL path: ")
+    dllWrapper = DllWrapper(dll_path)
+    subDllWrapper1 = SubDllWrapper1(dll_path1)
+    subDllWrapper2 = SubDllWrapper2(dll_path2)
+        
+    if(0!=subDllWrapper1.load_dll()):
+        print("error")
+
+
+    if subDllWrapper1.get_loaded_dll():
+        print('DLL is already loaded')
+    else:
+        print('DLL is not loaded')
+    
+
+    if(0!=subDllWrapper2.load_dll()):
+        print("error")
+
+    subDllWrapper2.get_loaded_dll()
+
+    import gc
+    #del dll_wrapper
+    del DllWrapper
+    gc.collect()
+
+
+
+    """
+    #dll_wrapper.execute_function("function_name", arg1, arg2)
+    """
