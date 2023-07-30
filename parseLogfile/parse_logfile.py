@@ -52,6 +52,10 @@ class LogParserMixIN:
 
 class LogParser1(LogParserMixIN):
     log_pattern = re.compile(r'^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\s+\[(\w+)\]\s+(.+)$')
+    # yyyy-mm-dd hh:mm:ss,SSS [Log Level] Message........
+    # d{4} : \dは数字、{4}は4回繰り返しを意味する
+    # \w+は1つ以上の英数字またはアンダースコアにマッチ。[]で囲まれた部分はログレベルを表しています。
+    # \s+: 1つ以上の空白文字（スペース、タブ、改行など）にマッチします。
     csv_heder = ['index', 'Timestamp', 'Log Level', 'Message']
 
     def __init__(self) -> None:
