@@ -7,7 +7,12 @@ class LogParserMixIN:
     """
     log_pattern = ""
     csv_heder = []
-
+    def __init__(self) -> None:
+        self.logs = []
+        self.previous_message = ""
+        self.index = 0        
+        pass
+    
     def parse_log_file(self, log_file_path):
         """
         Parse the specified log file and store log information in a list.
@@ -58,17 +63,13 @@ class LogParser1(LogParserMixIN):
     # \s+: 1つ以上の空白文字（スペース、タブ、改行など）にマッチします。
     csv_heder = ['index', 'Timestamp', 'Log Level', 'Message']
 
-    def __init__(self) -> None:
-        self.logs = []
-        self.previous_message = ""
-        self.index = 0        
-        pass
+
 
 
 if __name__ == "__main__":
     log_parser = LogParser1()
-    log_file_path = "D:\Learnning\Python\log\sample.log"  # 解析するlogファイルのパスを指定
-    output_csv_file = "D:\Learnning\Python\log\output_logs2.csv"  # 出力するCSVファイルの名前を指定
+    log_file_path = "D:\Learnning\Python\parseLogfile\sample.log"  # 解析するlogファイルのパスを指定
+    output_csv_file = "D:\Learnning\Python\parseLogfile\output_logs2.csv"  # 出力するCSVファイルの名前を指定
 
     log_parser.parse_log_file(log_file_path)
     log_parser.write_to_csv(output_csv_file)
