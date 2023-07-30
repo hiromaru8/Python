@@ -1,7 +1,7 @@
 import re
 import csv
 
-class LogParserMixIN:
+class LogParser:
     """
     Mixin class to parse log files and store log information.
     """
@@ -55,7 +55,7 @@ class LogParserMixIN:
             writer.writerows(self.logs)
 
 
-class LogParser1(LogParserMixIN):
+class LogParser1(LogParser):
     log_pattern = re.compile(r'^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3})\s+\[(\w+)\]\s+(.+)$')
     # yyyy-mm-dd hh:mm:ss,SSS [Log Level] Message........
     # d{4} : \dは数字、{4}は4回繰り返しを意味する
