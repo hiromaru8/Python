@@ -16,22 +16,22 @@ def test(file :str ):
     # Numpy処理へ
     # numpy のint64bit ビッグエンディアンへ
     # 以降の処理でビット演算等でuintでは処理できないため、intとする。
-    sync_np_array = np.frombuffer(data_24, dtype=np.int64).newbyteorder('>')
+    test_np_array = np.frombuffer(data_24, dtype=np.int64).newbyteorder('>')
 
     # 
 
-    A       = be.mid_1data_int64(sync_np_array[0],0,51)
-    A_d     = be.mid_1data_int64(sync_np_array[0],32,19)
-    B=be.mid_2data_int64(sync_np_array[0],sync_np_array[1],51,0,51)
+    A       = be.mid_1data_int64(sync_np_array[0],0,64)
+    A_d     = be.mid_1data_int64(sync_np_array[0],32,1)
+    B=be.mid_2data_int64(sync_np_array[0],sync_np_array[1],1,0,1)
 
     # config
     setA   = np.bitwise_not(A)& 0x7ffffffffffff 
 
-    tmp_a = br.rotate_left_inRrange(A,A_b,51)
+    tmp_a = br.rotate_left_inRrange(A,1,1)
 
     setB = np.bitwise_xor(B,tmp_a)
 
-    set_data0 = be.mid_1data_int64toint32(setA,13,32)
+    set_data0 = be.mid_1data_int64toint32(setA,1,1)
 
 
     out=np.zeros(5,dtype=np.int32)
