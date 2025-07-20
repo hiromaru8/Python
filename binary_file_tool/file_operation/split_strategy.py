@@ -72,9 +72,8 @@ class SplitStrategy(FileOperationStrategy):
                 if not chunk:
                     break
                 # 端数がある場合、指定があれば破棄する
-                if self.ignore_tail and len(chunk) < self.chunk_size:
+                if len(chunk) < self.chunk_size and self.ignore_tail:
                     break
-                
                 # 出力ファイル名
                 base_name = file.stem
                 ext = file.suffix
