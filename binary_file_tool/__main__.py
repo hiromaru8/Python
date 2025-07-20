@@ -83,7 +83,12 @@ def main():
         return
 
     for path in paths:
-        operation.execute(path)
+        try:
+            outpath = operation.execute(path)
+            if outpath:
+                print(f"出力ファイル：{outpath}")
+        except Exception as e:
+            print(f"予期しないエラーが発生しました: {path} - {e}")
 
 # エントリーポイント
 if __name__ == '__main__':

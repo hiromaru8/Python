@@ -27,3 +27,4 @@ class HexDumpStrategy(FileOperationStrategy):
                 hex_chunk = ' '.join(f"{b:02x}" for b in chunk)
                 ascii_chunk = ''.join((chr(b) if 32 <= b < 127 else '.') for b in chunk)
                 print(f"{self.offset + i:08x}  {hex_chunk:<48}  |{ascii_chunk}|")
+                

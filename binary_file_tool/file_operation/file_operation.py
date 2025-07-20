@@ -1,3 +1,5 @@
+from typing import Optional
+
 from binary_file_tool.file_operation.strategy_base import FileOperationStrategy
 
 
@@ -13,15 +15,16 @@ class FileOperation:
         """
         self.strategy = strategy
 
-    def execute(self, filepath):
+    def execute(self, filepath: str) -> Optional[str]:
         """
         戦略に基づいてファイル操作を実行する。
 
         :param filepath: 対象ファイルパス
         """
         try:
-            self.strategy.execute(filepath)
+            return self.strategy.execute(filepath)
         except IOError as e:
-            print(f"ファイル操作中にエラーが発生しました: {filepath} - {e}")
+            raise  IOError(f"ファイル操作中にエラーが発生しました: {filepath} - {e}")
         except Exception as e:
-            print(f"予期しないエラーが発生しました: {filepath} - {e}")
+            raise Exception(f"{e}")
+        return None
