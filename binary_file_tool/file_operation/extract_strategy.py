@@ -65,14 +65,13 @@ class ExtractStrategy(FileOperationStrategy):
         file = Path(filepath)
         
         # 範囲外アクセスの対処
-        file_size = file.stat().st_size
         # 空ファイル
         check_file_not_empty(file)
         
         # オフセットが範囲外
         check_offset_in_range(file, self.offset)
         
-        read_size = min(self.size, file_size - self.offset)
+        read_size = self.size
         # 指定サイズを得られない
         check_size_available(file, self.offset, self.size)
     

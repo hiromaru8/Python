@@ -61,10 +61,10 @@ def check_offset_in_range(filepath: Path, offset: int) -> None:
         OffsetOutOfRangeError: オフセットがファイルサイズを超える場合に発生
     """
     size = filepath.stat().st_size
-    if offset > size:
+    if offset >= size:
         raise OffsetOutOfRangeError(f"オフセット({offset})がファイルサイズ({size})を超えています。ファイル: '{filepath}'")
 
-def check_size_available(filepath: Path, offset: int, requested_size: int) -> int:
+def check_size_available(filepath: Path, offset: int, requested_size: int) -> None:
     """
     指定したオフセットから要求されたサイズが読み込み可能かをチェックする。
     
@@ -79,9 +79,21 @@ def check_size_available(filepath: Path, offset: int, requested_size: int) -> in
     """
     size = filepath.stat().st_size
     available = size - offset
+    if offset < 0:
+        raise ValueError(f"オフセット({offset})は負の値です。")
+
     if requested_size > available:
         raise SizeExceedsError(
             f"要求サイズ({requested_size}バイト)は利用可能サイズ({available}バイト)を超えています。"
             f"ファイル: '{filepath}', オフセット: {offset}"
         )
 
+def check_chunk_size(filepath: Path, chunk_size : int) -> None:
+    
+    check_file_not_empty(filepath)
+    if chunk_size <= 0:
+        raise ValueError(f"チャンクサイズは正の整数である必要があります。指定値: {chunk_size}")
+    if chunk_size > filepath.stat().st_size:
+        raise ValueError(f"チャンクサイズ({chunk_size})はファイルのサイズ({chunk_size})を超えています。")
+    
+    
