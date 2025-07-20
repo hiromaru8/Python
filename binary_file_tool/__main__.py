@@ -38,19 +38,23 @@ def main():
     """
     コマンドライン引数を解析し、対応するファイル処理を実行する。
     """
+    # 共通オプション用の親パーサー（help を False にして二重表示を防ぐ）
+    common_parser = argparse.ArgumentParser(add_help=False)
+    common_parser.add_argument('--force', action='store_true',  help='大量ファイル処理の確認をスキップする')
+    common_parser.add_argument('--input', required=True,        help='入力ファイルパス（ワイルドカード可）')
+    
+    # メインパーサー
     parser = argparse.ArgumentParser(description="Binary file operation tool")
     subparsers = parser.add_subparsers(dest='command')
 
     # 分割コマンド
-    parser_split = subparsers.add_parser('split',                                       help='バイナリファイルを指定サイズで分割する')
-    parser_split.add_argument('--input',                                required=True,  help='入力ファイルパス（ワイルドカード可）')
+    parser_split = subparsers.add_parser('split', parents=[common_parser],              help='バイナリファイルを指定サイズで分割する')
     parser_split.add_argument('--size',         type=non_negative_int,  required=True,  help='分割サイズ（バイト）')
     parser_split.add_argument('--ignore-tail',  action='store_true',                    help='端数チャンクを無視する')
     parser_split.add_argument('--output_dir',   type=str,                               help='出力ディレクトリ。未指定の場合は、入力ファイルと同じ')
 
     # 抽出コマンド
-    parser_extract = subparsers.add_parser('extract', help='任意範囲のデータを抽出')
-    parser_extract.add_argument('--input',                              required=True,  help='入力ファイルパス（ワイルドカード可）')
+    parser_extract = subparsers.add_parser('extract', parents=[common_parser],          help='任意範囲のデータを抽出')
     parser_extract.add_argument('--offset',     type=non_negative_int,  default=0,      help='開始位置（バイト）。初期値は０')
     parser_extract.add_argument('--size',       type=non_negative_int,  required=True,  help='抽出サイズ（バイト）')
     parser_extract.add_argument('--suffix',     type=str,                               help='出力ファイル名の末尾。未指定の場合"_extrace"')
@@ -58,8 +62,7 @@ def main():
     parser_extract.add_argument('--output_dir', type=str,                               help='出力ディレクトリ。未指定の場合は、入力ファイルと同じ')
     
     # hexdumpコマンド
-    parser_hexdump = subparsers.add_parser('hexdump', help='ファイル内容をhexdump表示')
-    parser_hexdump.add_argument('--input',  required=True,                          help='入力ファイルパス（ワイルドカード可）')
+    parser_hexdump = subparsers.add_parser('hexdump', parents=[common_parser],      help='ファイル内容をhexdump表示')
     parser_hexdump.add_argument('--offset', type=non_negative_int, default=0,       help='開始位置（バイト）')
     parser_hexdump.add_argument('--size',   type=non_negative_int, default=None,    help='表示サイズ（バイト）')
 
@@ -81,12 +84,19 @@ def main():
     if not paths:
         print(f"[警告] ファイルが見つかりません: {args.input}")
         return
-
+    MAX_FILES_BEFORE_WARNING = 30
+    if len(paths) >= MAX_FILES_BEFORE_WARNING and not args.force:
+        print(f"[警告] 対象ファイルが {len(paths)} 件あります。処理を続行しますか？ (y/N): ", end="")
+        confirm = input().strip().lower()
+        if confirm != 'y':
+            print("処理を中止しました。")
+            return
     for path in paths:
         try:
             outpath = operation.execute(path)
-            if outpath:
-                print(f"出力ファイル：{outpath}")
+            
+            for path in outpath:
+                print(f"出力ファイル：{path}")
         except Exception as e:
             print(f"予期しないエラーが発生しました: {path} - {e}")
 
