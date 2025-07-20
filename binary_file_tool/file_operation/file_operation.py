@@ -40,12 +40,14 @@ class FileOperation:
         :param filepath: 対象ファイルパス
         """
         try:
-            output = []
-            output.append(self.strategy.execute(filepath))
+            result = self.strategy.execute(filepath)
             
-            return output
+            if isinstance(result, list):
+                return result
+            else:
+                return [result]
         except IOError as e:
             raise  IOError(f"ファイル操作中にエラーが発生しました: {filepath} - {e}")
         except Exception as e:
-            raise Exception(f"{e}")
+            raise Exception(f"{e}") from e
         return None
