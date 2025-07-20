@@ -17,7 +17,6 @@ FileOperation クラスは、Strategy パターンに基づき、特定のファ
     output_path = operator.execute("input.bin")
     print(f"出力先: {output_path}")
 """ 
-from typing import Optional
 
 from binary_file_tool.file_operation.strategy_base import FileOperationStrategy
 
