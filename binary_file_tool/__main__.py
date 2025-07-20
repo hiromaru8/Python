@@ -24,6 +24,12 @@ def resolve_files(pattern):
 
     return list(base.rglob(pattern))
 
+def non_negative_int(value):
+    ivalue = int(value)
+    if ivalue < 0:
+        raise argparse.ArgumentTypeError(f"{value} は0以上の整数ではありません")
+    return ivalue
+
 # メイン関数：コマンドライン引数の解析と処理実行
 def main():
     """
@@ -40,9 +46,16 @@ def main():
 
     # 抽出コマンド
     parser_extract = subparsers.add_parser('extract', help='任意範囲のデータを抽出')
-    parser_extract.add_argument('--input', required=True, help='入力ファイルパス（ワイルドカード可）')
-    parser_extract.add_argument('--offset', type=int, required=True, help='開始位置（バイト）')
-    parser_extract.add_argument('--size', type=int, required=True, help='抽出サイズ（バイト）')
+    parser_extract.add_argument('--input',                              required=True,  help='入力ファイルパス（ワイルドカード可）')
+    parser_extract.add_argument('--offset',     type=non_negative_int,  default=0,      help='開始位置（バイト）。初期値は０')
+    parser_extract.add_argument('--size',       type=non_negative_int,  required=True,  help='抽出サイズ（バイト）')
+    parser_extract.add_argument('--suffix',     type=str,                               help='出力ファイル名の末尾。未指定の場合"_extrace"')
+    parser_extract.add_argument('--file_ext',   type=str,                               help='出力ファイル拡張子。未指定の場合は入力ファイルと同じ')
+    parser_extract.add_argument('--output_dir', type=str,                               help='出力ディレクトリ。未指定の場合は、入力ファイルと同じ')
+    
+    
+    
+    
 
     # hexdumpコマンド
     parser_hexdump = subparsers.add_parser('hexdump', help='ファイル内容をhexdump表示')
@@ -55,7 +68,7 @@ def main():
     if args.command == 'split':
         strategy = SplitStrategy(args.size, args.ignore_tail)
     elif args.command == 'extract':
-        strategy = ExtractStrategy(args.offset, args.size)
+        strategy = ExtractStrategy(args.offset, args.size,suffix=args.suffix,file_ext=args.file_ext,output_dir=args.output_dir)
     elif args.command == 'hexdump':
         strategy = HexDumpStrategy(args.offset, args.size)
     else:

@@ -21,14 +21,15 @@ from pathlib import Path
 from typing import Optional
 
 from binary_file_tool.file_operation.strategy_base import FileOperationStrategy
+from binary_file_tool.file_error.exceptions import check_file_not_empty,check_offset_in_range,check_size_available
 
 # 任意範囲のデータ抽出戦略
 class ExtractStrategy(FileOperationStrategy):
     """
     指定した範囲のバイナリデータを抽出する戦略。
     """
-    def __init__(self, offset:int, 
-                 size:int, suffix :Optional[str] = None, file_ext:Optional[str] = None,
+    def __init__(self, offset:int, size:int,
+                 suffix :Optional[str] = None, file_ext:Optional[str] = None,
                  output_dir: Optional[str] = None) -> None:
         """
         Args:
@@ -39,10 +40,10 @@ class ExtractStrategy(FileOperationStrategy):
             file_ext (Optional[str], optional)  : 出力ファイルの拡張子. Defaults to None.
         """
 
-        self.offset = offset
-        self.size = size
-        self.suffix  = suffix  or "_extract"
-        self.file_ext = file_ext
+        self.offset     = offset
+        self.size       = size
+        self.suffix     = suffix if suffix else "_extract"
+        self.file_ext   = f".{file_ext.lstrip('.')}" if file_ext else None
         self.output_dir = Path(output_dir) if output_dir else None
         
     def execute(self, filepath:str) -> str:
@@ -50,12 +51,12 @@ class ExtractStrategy(FileOperationStrategy):
         ファイルから指定範囲を読み取り、別ファイルに保存する。
 
         Args:
-            filepath (str): _description_
+            filepath (str): 抽出元のファイルパス（絶対または相対パス）
 
         Raises:
-            ValueError: 空ファイル
-            ValueError: オフセットが範囲外
-            ValueError: 指定サイズを得られない
+            EmptyFileError: ファイルが空の場合
+            OffsetOutOfRangeError: オフセットがファイルサイズの範囲外の場合
+            SizeExceedsError: 指定サイズが利用可能なサイズを超えた場合
 
         Returns:
             str: 出力ファイルパス
@@ -66,17 +67,16 @@ class ExtractStrategy(FileOperationStrategy):
         # 範囲外アクセスの対処
         file_size = file.stat().st_size
         # 空ファイル
-        if file_size == 0:
-            raise ValueError(f"File '{file}' is empty.")
+        check_file_not_empty(file)
+        
         # オフセットが範囲外
-        if self.offset > file_size:
-            raise ValueError("Offset exceeds file size.")
+        check_offset_in_range(file, self.offset)
+        
         read_size = min(self.size, file_size - self.offset)
         # 指定サイズを得られない
-        if read_size < self.size:
-            raise ValueError(f"Requested size ({self.size}) exceeds remaining file size after offset ({file_size - self.offset}). "
-                             f"Actual readable size: {read_size}") 
-            
+        check_size_available(file, self.offset, self.size)
+    
+    
         # 読み込み
         with open(filepath, 'rb') as f:
             f.seek(self.offset)
@@ -85,7 +85,7 @@ class ExtractStrategy(FileOperationStrategy):
         # 出力ファイル名
         suffix  = self.suffix 
         new_name = file.with_name(f"{file.stem}{suffix}")
-            
+        
         # 出力ファイル拡張子
         if self.file_ext:
             out_path = new_name.with_suffix(self.file_ext)  # 指定した拡張子
