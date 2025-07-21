@@ -60,3 +60,7 @@ coverage.xml
 # Mac や Windows 固有ファイル
 .DS_Store
 Thumbs.db
+
+
+# PlantUML ファイルの生成物
+out/
