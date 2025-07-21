@@ -11,7 +11,8 @@ from binary_file_tool.file_operation.hexdump_strategy import HexDumpStrategy
 from binary_file_tool.generate_file.generate_file import GenerateFile
 from binary_file_tool.generate_file.incremental_strategy import IncrementalDataStrategy
 from binary_file_tool.generate_file.random_strategy import SecureRandomStrategy
-
+from binary_file_tool.convert_file.convert_file import ConvertFile
+from binary_file_tool.convert_file.hextobinary_chunked_strategy import HexToBinaryChunkedStrategy
 
 # ワイルドカードを展開し、対象ファイル一覧を取得
 def resolve_files(pattern: str) -> List[Path]:
@@ -96,10 +97,27 @@ def main():
     parser_random.add_argument('--size', type=non_negative_int, required=True, help='生成サイズ（バイト）')
 
     # ==================================================================
+    #  ファイル変換コマンド群
+    # ==================================================================
+    parser_convert = subparsers.add_parser('convert', help='ファイル変換を実行する')
+    convert_subparsers = parser_convert.add_subparsers(dest='convert_type')
+    
+    # convert_file共通オプション用の親パーサー（help を False にして二重表示を防ぐ）
+    convert_file_parser = argparse.ArgumentParser(add_help=False)
+    convert_file_parser.add_argument('--output_dir', type=str, help='出力ディレクトリ。未指定の場合は、入力ファイルと同じ')
+    
+    # hextobinary サブコマンド
+    parser_hextobinary = convert_subparsers.add_parser('hextobinary', parents=[convert_file_parser], help='16進数テキストファイルをバイナリファイルに変換する')
+    parser_hextobinary.add_argument('--chunk_size', type=non_negative_int, default=8192,    help='チャンクサイズ（バイト）処理単位で、メモリ使用量を抑える')
+
+
+
+    # ==================================================================
     # コマンドライン引数に基づき、該当する戦略インスタンスを生成する
     # ==================================================================
     args = parser.parse_args()
     # 各サブコマンドごとの戦略生成
+    # ファイル操作群
     if args.command == 'split':
         strategy = SplitStrategy(args.size, args.ignore_tail,output_dir=args.output_dir)
         operation = FileOperation(strategy)
@@ -109,6 +127,7 @@ def main():
     elif args.command == 'hexdump':
         strategy = HexDumpStrategy(args.offset, args.size)
         operation = FileOperation(strategy)
+    # ファイル生成群
     elif args.command == 'generate':
         if args.generate_type == 'incremental':
             strategy = IncrementalDataStrategy(args.size, args.unit_size, args.start_value, args.endian)
@@ -118,6 +137,14 @@ def main():
             operation = GenerateFile(strategy)
         else:
             parser_generate.print_help()
+            return
+    # ファイル変換群
+    elif args.command == 'convert':
+        if args.convert_type == 'hextobinary':
+            strategy = HexToBinaryChunkedStrategy(encoding='utf-8-sig', chunk_size=args.chunk_size, output_dir=args.output_dir)
+            operation = ConvertFile(strategy)
+        else:
+            parser_convert.print_help()
             return
     else:
         parser.print_help()
