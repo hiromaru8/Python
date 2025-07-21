@@ -10,6 +10,7 @@ from binary_file_tool.file_operation.hexdump_strategy import HexDumpStrategy
 
 from binary_file_tool.generate_file.generate_file import GenerateFile
 from binary_file_tool.generate_file.incremental_strategy import IncrementalDataStrategy
+from binary_file_tool.generate_file.random_strategy import SecureRandomStrategy
 
 
 # ワイルドカードを展開し、対象ファイル一覧を取得
@@ -89,6 +90,10 @@ def main():
     parser_increment.add_argument('--unit_size',   type=non_negative_int,       default=4,      help='単位サイズ（バイト）')
     parser_increment.add_argument('--start_value', type=non_negative_int,       default=0,      help='開始値')
     parser_increment.add_argument('--endian',      choices=['little', 'big'],   default='big',  help='バイトオーダー')
+    
+    # random サブコマンド
+    parser_random = generate_subparsers.add_parser('random', parents=[generate_file_parser], help='暗号論的に安全な乱数で構成されたバイナリファイルを生成')
+    parser_random.add_argument('--size', type=non_negative_int, required=True, help='生成サイズ（バイト）')
 
     # ==================================================================
     # コマンドライン引数に基づき、該当する戦略インスタンスを生成する
@@ -107,6 +112,9 @@ def main():
     elif args.command == 'generate':
         if args.generate_type == 'incremental':
             strategy = IncrementalDataStrategy(args.size, args.unit_size, args.start_value, args.endian)
+            operation = GenerateFile(strategy)
+        elif args.generate_type == 'random':
+            strategy = SecureRandomStrategy(args.size)
             operation = GenerateFile(strategy)
         else:
             parser_generate.print_help()
