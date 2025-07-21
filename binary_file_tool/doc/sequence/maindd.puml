@@ -1,4 +1,4 @@
-@startuml
+@startuml main
 actor User
 participant main
 participant argparse as ArgParser

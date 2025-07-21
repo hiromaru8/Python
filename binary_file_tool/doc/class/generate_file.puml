@@ -1,4 +1,4 @@
-@startuml
+@startuml generate_file
 package "generate_file" {
     interface GenerateFileStrategy {
         +execute(filepath: str): list<string>

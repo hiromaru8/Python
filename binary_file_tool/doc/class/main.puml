@@ -1,4 +1,4 @@
-@startuml
+@startuml main
 ' 他のファイルの図を読み込む場合（PlantUMLの!include機能）
 !include file_operation.puml
 !include generate_file.puml

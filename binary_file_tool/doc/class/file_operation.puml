@@ -1,4 +1,4 @@
-@startuml
+@startuml file_operation
 ' パッケージ構成（任意）
 package "file_operation" {
     interface FileOperationStrategy {
