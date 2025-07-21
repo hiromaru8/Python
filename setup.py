@@ -9,10 +9,10 @@ setup(
     # ],
     entry_points={
         'console_scripts': [
-            'binary_file_tool=binary_file_tool.__main__:main',  # bftコマンドで実行可能に
+            'binary_file_tool=binary_file_tool.__main__:main',  # binary_file_toolコマンドで実行可能に
         ],
     },
     author='H.Y.',
     description='Binary file operation tool',
-    python_requires='>=3.7',
+    python_requires='>=3.11',
 )
