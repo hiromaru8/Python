@@ -1,0 +1,28 @@
+@startuml
+
+left to right direction
+
+actor User
+
+package "Binary File Tool" {
+    usecase "分割 (Split)" as UC_Split
+    usecase "抽出 (Extract)" as UC_Extract
+    usecase "ヘキサダンプ表示 (HexDump)" as UC_HexDump
+    
+    usecase "インクリメント生成 (Incremental Generate)" as UC_IncrementalGenerate
+    usecase "乱数生成 (Random Generate)" as UC_RandomGenerate
+    
+    usecase "入力ファイル解決 (Resolve Files)" as UC_FileResolve
+}
+
+User --> UC_FileResolve : 入力ファイル検索
+
+User --> UC_Split
+User --> UC_Extract
+User --> UC_HexDump
+
+User --> UC_IncrementalGenerate
+User --> UC_RandomGenerate
+
+
+@enduml

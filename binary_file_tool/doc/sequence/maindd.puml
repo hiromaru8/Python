@@ -1,0 +1,76 @@
+@startuml
+actor User
+participant main
+participant argparse as ArgParser
+participant resolve_files as Resolver
+participant FileOperation
+participant GenerateFile
+participant SplitStrategy
+participant ExtractStrategy
+participant HexDumpStrategy
+participant IncrementalDataStrategy
+participant SecureRandomStrategy
+
+User -> main: コマンド実行
+main -> ArgParser: 引数解析
+alt command == split
+    main -> SplitStrategy: 戦略生成
+    main -> FileOperation: 戦略セット
+else command == extract
+    main -> ExtractStrategy: 戦略生成
+    main -> FileOperation: 戦略セット
+else command == hexdump
+    main -> HexDumpStrategy: 戦略生成
+    main -> FileOperation: 戦略セット
+else command == generate
+    alt generate_type == incremental
+        main -> IncrementalDataStrategy: 戦略生成
+        main -> GenerateFile: 戦略セット
+    else generate_type == random
+        main -> SecureRandomStrategy: 戦略生成
+        main -> GenerateFile: 戦略セット
+    end
+end
+main -> Resolver: 入力ファイル解決
+note right of main
+  #==================================================================
+  # 対象ファイルの解決
+  # ==================================================================
+  # 対象ファイルが多い場合の確認
+  # 30件以上のファイルが対象の場合、確認を行う
+  MAX_FILES_BEFORE_WARNING = 30
+  if len(paths) >= MAX_FILES_BEFORE_WARNING and not args.force:
+      ユーザーに確認を要求
+      中止する場合はreturn
+end note
+
+alt 対象ファイル数 >= 30 かつ not force
+    main -> User: 確認メッセージ表示 (処理続行しますか？)
+    User -> main: 入力（y/N）
+    alt 入力 != "y"
+        main -> main: 処理中止
+        main -> User: 中止メッセージ表示
+        return
+    else
+        main -> main: 処理続行
+    end
+else
+    main -> main: 処理続行
+end
+
+loop pathsの各ファイルに対して
+    alt command in ('split', 'extract', 'hexdump')
+        main -> FileOperation: execute(path)
+        FileOperation --> main: 出力ファイルリスト
+    else command == 'generate'
+        main -> GenerateFile: execute(path)
+        GenerateFile --> main: 出力ファイルリスト
+    end
+
+    loop 出力ファイルリストの各ファイルに対して
+        main -> User: 出力ファイル表示
+    end
+end
+
+main -> User: 最終結果表示完了
+@enduml

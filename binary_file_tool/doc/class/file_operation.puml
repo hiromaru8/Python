@@ -1,0 +1,42 @@
+@startuml
+' パッケージ構成（任意）
+package "file_operation" {
+    interface FileOperationStrategy {
+        +execute(filepath: str): list<string>
+    }
+
+    class FileOperation {
+        -strategy: FileOperationStrategy
+        +execute(filepath: str): list<string>
+    }
+
+    class ExtractStrategy {
+        -offset: int
+        -size: int
+        -suffix: str
+        -file_ext: str
+        -output_dir: Path
+        +execute(filepath: str): list<string>
+    }
+
+    class SplitStrategy {
+        -chunk_size: int
+        -ignore_tail: bool
+        -output_dir: Path
+        +execute(filepath: str): list<string>
+    }
+
+    class HexDumpStrategy {
+        -offset: int
+        -size: int
+        +execute(filepath: str): list<string>
+    }
+
+    FileOperationStrategy <|.. ExtractStrategy
+    FileOperationStrategy <|.. SplitStrategy
+    FileOperationStrategy <|.. HexDumpStrategy
+
+    FileOperation --> FileOperationStrategy
+}
+
+@enduml

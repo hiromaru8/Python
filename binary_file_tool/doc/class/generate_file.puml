@@ -1,0 +1,30 @@
+@startuml
+package "generate_file" {
+    interface GenerateFileStrategy {
+        +execute(filepath: str): list<string>
+    }
+
+    class GenerateFile {
+        -strategy: GenerateFileStrategy
+        +execute(filepath: str): list<string>
+    }
+
+    class IncrementalDataStrategy {
+        -size: int
+        -unit_size: int
+        -start_value: int
+        -endian: Literal['little', 'big']
+        +execute(filepath: str): list<string>
+    }
+
+    class SecureRandomStrategy {
+        -size: int
+        +execute(filepath: str): list<string>
+    }
+
+    GenerateFileStrategy <|.. IncrementalDataStrategy
+    GenerateFileStrategy <|.. SecureRandomStrategy
+
+    GenerateFile --> GenerateFileStrategy
+}
+@enduml

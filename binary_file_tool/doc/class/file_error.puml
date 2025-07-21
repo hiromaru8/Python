@@ -1,0 +1,13 @@
+@startuml
+
+package "file_error" {
+    class FileError
+    class EmptyFileError
+    class OffsetOutOfRangeError
+    class SizeExceedsError
+
+    FileError <|-- EmptyFileError
+    FileError <|-- OffsetOutOfRangeError
+    FileError <|-- SizeExceedsError
+}
+@enduml
