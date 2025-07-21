@@ -2,17 +2,21 @@
 ' 他のファイルの図を読み込む場合（PlantUMLの!include機能）
 !include file_operation.puml
 !include generate_file.puml
+!include convert_file.puml
 
 class Main {
     +main()
 }
 
 Main ..> FileOperation : uses
-Main ..> GenerateFile : uses
 Main ..> SplitStrategy : creates
 Main ..> ExtractStrategy : creates
 Main ..> HexDumpStrategy : creates
+
+Main ..> GenerateFile : uses
 Main ..> IncrementalDataStrategy : creates
 Main ..> SecureRandomStrategy : creates
 
+Main ..> ConvertFile : uses
+Main ..> HexToBinaryChunkedStrategy : creates
 @enduml

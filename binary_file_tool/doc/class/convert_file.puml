@@ -1,0 +1,21 @@
+@startuml convert_file
+package "convert_file" {
+    interface ConvertFileStrategy {
+        +execute(filepath: str): list<string>
+    }
+
+    class ConvertFile {
+        -strategy: ConvertFileStrategy
+        +execute(filepath: str): list<string>
+    }
+
+    class HexToBinaryChunkedStrategy {
+        -chunk_size: int
+        +execute(filepath: str): list<string>
+    }
+
+    ConvertFileStrategy <|.. HexToBinaryChunkedStrategy
+
+    ConvertFile --> ConvertFileStrategy
+}
+@enduml

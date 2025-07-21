@@ -8,9 +8,13 @@ package "Binary File Tool" {
     usecase "分割 (Split)" as UC_Split
     usecase "抽出 (Extract)" as UC_Extract
     usecase "ヘキサダンプ表示 (HexDump)" as UC_HexDump
-    
+
+    usecase "バイナリファイル生成 (Generate Binary File)" as UC_Generate
     usecase "インクリメント生成 (Incremental Generate)" as UC_IncrementalGenerate
     usecase "乱数生成 (Random Generate)" as UC_RandomGenerate
+
+    usecase "ファイル変換 (Convert File)" as UC_ConvertFile
+    usecase "16進数テキストからバイナリ変換 (Hex to Binary)" as UC_HexToBinary
     
     usecase "入力ファイル解決 (Resolve Files)" as UC_FileResolve
 }
@@ -21,8 +25,11 @@ User --> UC_Split
 User --> UC_Extract
 User --> UC_HexDump
 
-User --> UC_IncrementalGenerate
-User --> UC_RandomGenerate
+User --> UC_Generate
+UC_Generate .-> UC_IncrementalGenerate  : extends
+UC_Generate .-> UC_RandomGenerate  : extends
 
+User --> UC_ConvertFile
+UC_ConvertFile .-> UC_HexToBinary : extends
 
 @enduml
