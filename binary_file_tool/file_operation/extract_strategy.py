@@ -42,11 +42,11 @@ class ExtractStrategy(FileOperationStrategy):
 
         self.offset     = offset
         self.size       = size
-        self.suffix     = suffix if suffix else "_extract"
+        self.suffix     = f"_{suffix}" if suffix else "_extract"
         self.file_ext   = f".{file_ext.lstrip('.')}" if file_ext else None
         self.output_dir = Path(output_dir) if output_dir else None
         
-    def execute(self, filepath:str) -> str:
+    def execute(self, filepath:str) -> list[str]:
         """
         ファイルから指定範囲を読み取り、別ファイルに保存する。
 
@@ -101,4 +101,4 @@ class ExtractStrategy(FileOperationStrategy):
         with open(out_path, 'wb') as out_file:
             out_file.write(data)
         
-        return str(out_path)
+        return [str(out_path)]

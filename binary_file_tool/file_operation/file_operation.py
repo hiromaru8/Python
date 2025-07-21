@@ -47,7 +47,7 @@ class FileOperation:
             else:
                 return [result]
         except IOError as e:
-            raise  IOError(f"ファイル操作中にエラーが発生しました: {filepath} - {e}")
+            raise  IOError(f"ファイル操作中にエラーが発生しました: {filepath} - {e}") from e
         except Exception as e:
             raise Exception(f"{e}") from e
-        return None
+
