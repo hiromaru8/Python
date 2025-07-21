@@ -64,3 +64,6 @@ Thumbs.db
 
 # PlantUML ファイルの生成物
 out/
+# VSCode の一時ファイル
+.vscode-tmp/
+.VSCodeCounter/

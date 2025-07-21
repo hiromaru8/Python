@@ -59,7 +59,7 @@ class ExtractStrategy(FileOperationStrategy):
             SizeExceedsError: 指定サイズが利用可能なサイズを超えた場合
 
         Returns:
-            str: 出力ファイルパス
+            list[str]: 出力されたバイナリファイルのパス（1要素）
         """
 
         file = Path(filepath)
