@@ -44,6 +44,9 @@ def main():
     """
     コマンドライン引数を解析し、対応するファイル処理を実行する。
     """
+    print(__file__)
+    print("hello world")
+    print(__file__)
     # メインパーサー
     parser = argparse.ArgumentParser(description="Binary file operation tool")
     subparsers = parser.add_subparsers(dest='command')
@@ -105,6 +108,8 @@ def main():
     # convert_file共通オプション用の親パーサー（help を False にして二重表示を防ぐ）
     convert_file_parser = argparse.ArgumentParser(add_help=False)
     convert_file_parser.add_argument('--output_dir', type=str, help='出力ディレクトリ。未指定の場合は、入力ファイルと同じ')
+    convert_file_parser.add_argument('--input', required=True,        help='入力ファイルパス（ワイルドカード可）')
+    convert_file_parser.add_argument('--force', action='store_true',  help='大量ファイル処理の確認をスキップする')
     
     # hextobinary サブコマンド
     parser_hextobinary = convert_subparsers.add_parser('hextobinary', parents=[convert_file_parser], help='16進数テキストファイルをバイナリファイルに変換する')
@@ -153,7 +158,7 @@ def main():
     # ==================================================================
     # 入出力ファイルの解決と処理実行
     # ==================================================================
-    if args.command in ('split', 'extract', 'hexdump'):
+    if args.command in ('split', 'extract', 'hexdump', 'convert'):
         paths = resolve_files(args.input)
         if not paths:
             print(f"[警告] 入力パターンにマッチするファイルが見つかりません: {args.input}")
@@ -189,4 +194,5 @@ def main():
 
 # エントリーポイント
 if __name__ == '__main__':
+    print(__file__)
     main()
