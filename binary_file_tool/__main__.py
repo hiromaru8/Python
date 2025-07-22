@@ -44,9 +44,6 @@ def main():
     """
     コマンドライン引数を解析し、対応するファイル処理を実行する。
     """
-    print(__file__)
-    print("hello world")
-    print(__file__)
     # メインパーサー
     parser = argparse.ArgumentParser(description="Binary file operation tool")
     subparsers = parser.add_subparsers(dest='command')
