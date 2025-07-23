@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # pipenv、poetry、virtualenv などの仮想環境
-.venv/
+.*venv/
 venv/
 ENV/
 env/
@@ -67,3 +67,5 @@ out/
 # VSCode の一時ファイル
 .vscode-tmp/
 .VSCodeCounter/
+
+test/
