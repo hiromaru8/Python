@@ -3,6 +3,9 @@ import glob
 from pathlib import Path
 from typing import List
 
+from util.resolve_files.resolve_files import resolve_files
+
+
 from binary_file_tool.file_operation.file_operation import FileOperation
 from binary_file_tool.file_operation.split_strategy import SplitStrategy
 from binary_file_tool.file_operation.extract_strategy import ExtractStrategy
@@ -14,15 +17,6 @@ from binary_file_tool.generate_file.random_strategy import SecureRandomStrategy
 from binary_file_tool.convert_file.convert_file import ConvertFile
 from binary_file_tool.convert_file.hextobinary_chunked_strategy import HexToBinaryChunkedStrategy
 
-# ワイルドカードを展開し、対象ファイル一覧を取得
-def resolve_files(pattern: str) -> List[Path]:
-    """
-    入力パターン（ワイルドカード含む）にマッチするファイル一覧を取得する。
-
-    :param pattern: 入力ファイルパターン（例: *.bin, data/**/*.bin など）
-    :return: Path オブジェクトのリスト（ファイルパス）
-    """
-    return [Path(p) for p in glob.glob(pattern, recursive=True) if Path(p).is_file()]
 
 def non_negative_int(value):
     """
