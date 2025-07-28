@@ -4,7 +4,11 @@ from csv_file_tool.concat.base import ConcatStrategy
 
 class ConcatByIndexStrategy(ConcatStrategy):
     """
-    DataFrameをインデックスに基づいて横方向（axis=1）に結合する戦略。
+    DataFrameをインデックスに基づいて横方向（列方向）に結合する戦略。
+    同じインデックスに対して列を追加する形で統合。
     """
+
     def concat(self, dfs: List[pd.DataFrame]) -> pd.DataFrame:
-        return pd.concat(dfs, axis=1)
+        df = pd.concat(dfs, axis=1)
+        df.dropna(how='all', inplace=True)  # 全ての値がNaNの行を削除
+        return df

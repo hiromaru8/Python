@@ -1,0 +1,21 @@
+@startuml csv_file_tool_usecase
+
+left to right direction
+
+actor User
+
+package "csv_file_tool_usecase" {
+    usecase "結合 (Concat)" as UC_Concat
+    usecase "インデックスによる結合 (Concat by Index)" as UC_ConcatByIndex
+    usecase "カラムによる結合 (Concat by Column)" as UC_ConcatByColumn
+
+    usecase "入力ファイル解決 (Resolve Files)" as UC_FileResolve
+}
+
+User --> UC_FileResolve : 入力ファイル検索
+
+User --> UC_Concat
+UC_Concat .-> UC_ConcatByIndex: extends 
+UC_Concat .-> UC_ConcatByColumn: extends 
+
+@enduml

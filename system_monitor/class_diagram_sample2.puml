@@ -1,0 +1,68 @@
+@startuml
+title SystemMonitorApp クラス図（with External Libraries）
+
+' 外部ライブラリ
+package "matplotlib" {
+    class Figure
+    class FigureCanvasTkAgg
+}
+
+package "tkinter" {
+    class Tk
+    class StringVar
+    class OptionMenu
+    class Label
+    class Button
+    class Frame
+}
+
+package "psutil" {
+    class psutil <<module>>
+    psutil : +cpu_percent()
+    psutil : +virtual_memory()
+}
+
+package "datetime" {
+    class datetime <<static>>
+    datetime : +now()
+    datetime : +strftime()
+}
+
+class SystemMonitorApp {
+    - root: Tk
+    - interval_var: StringVar
+    - toggle_button: Button
+    - status_var: StringVar
+    - figure: Figure
+    - canvas: FigureCanvasTkAgg
+    - ax_cpu
+    - ax_mem
+    - cpu_history: list<float>
+    - mem_history: list<float>
+    - time_history: list<str>
+    - max_points: int
+    - running: bool
+    + __init__(root: Tk)
+    + toggle_update(): void
+    + update_graph(): void
+}
+
+class main {
+    +main(): void
+}
+
+' 関連
+SystemMonitorApp --> Tk : uses
+SystemMonitorApp --> StringVar : uses
+SystemMonitorApp --> OptionMenu : uses
+SystemMonitorApp --> Button : uses
+SystemMonitorApp --> Label : uses
+SystemMonitorApp --> Frame : uses
+SystemMonitorApp --> Figure : creates
+SystemMonitorApp --> FigureCanvasTkAgg : embeds
+SystemMonitorApp --> psutil : calls
+SystemMonitorApp --> datetime : calls
+
+main --> SystemMonitorApp : instantiates
+
+@enduml
