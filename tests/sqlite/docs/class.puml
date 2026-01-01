@@ -1,0 +1,58 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' =========================
+' Schema
+' =========================
+class TableSchema <<dataclass>> {
+    +table_name: str
+    +columns: dict
+    +primary_keys: list[str]
+}
+
+' =========================
+' Database Strategy
+' =========================
+interface DatabaseStrategy {
+    +connect(): Connection
+    +initialize(conn, schemas, recreate)
+}
+
+class SQLiteStrategy {
+    -db_path: str
+    +connect(): Connection
+    +initialize(conn, schemas, recreate)
+}
+
+DatabaseStrategy <|-- SQLiteStrategy
+
+' =========================
+' Database Context
+' =========================
+class DatabaseContext {
+    -db_strategy: DatabaseStrategy
+    -conn: Connection
+    +close()
+}
+
+DatabaseContext --> DatabaseStrategy
+DatabaseContext --> TableSchema : uses *
+
+' =========================
+' Generic Table Strategy
+' =========================
+class GenericTableStrategy {
+    -schema: TableSchema
+    +insert(conn, **values)
+    +update(conn, **values)
+    +select_columns(conn, columns)
+    +select_all(conn)
+    +count_all(conn): int
+    +select_by_pk(conn, **pk_values)
+    +delete_by_pk(conn, **pk_values)
+    +exists_by_pk(conn, **pk_values): bool
+}
+
+GenericTableStrategy *-- TableSchema
+
+@enduml

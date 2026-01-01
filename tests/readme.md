@@ -1,0 +1,4 @@
+
+```
+py -m pytest .\tests\
+```
