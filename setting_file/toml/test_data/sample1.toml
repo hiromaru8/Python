@@ -1,0 +1,45 @@
+# =============================
+# 基本的な型
+# =============================
+title = "TOML Example"
+version = 1
+pi = 3.14159
+active = true
+
+# 日付・時刻
+created_at = 2025-08-23T10:00:00Z
+birthday = 1979-05-27
+
+# 配列
+numbers = [1, 2, 3, 4, 5]
+names = ["Alice", "Bob", "Charlie"]
+flags = [true, false, true]
+
+# ネストした配列
+matrix = [[1, 2], [3, 4], [5, 6]]
+
+# =============================
+# テーブル（辞書相当）
+# =============================
+[owner]
+name = "Tom Preston-Werner"
+dob = 1979-05-27T07:32:00Z
+
+[database]
+server = "192.168.1.1"
+ports = [8000, 8001, 8002]
+connection_max = 5000
+enabled = true
+
+# =============================
+# ネストしたテーブル
+# =============================
+[servers]
+
+  [servers.alpha]
+  ip = "10.0.0.1"
+  role = "frontend"
+
+  [servers.beta]
+  ip = "10.0.0.2"
+  role = "backend"

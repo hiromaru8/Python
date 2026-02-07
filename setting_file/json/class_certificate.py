@@ -85,7 +85,7 @@ def load_json_from_file(file_path: str) -> dict:
 if __name__ == '__main__':
     # ここから必要な処理を記述する
 
-    file_path = "D:/Learnning/Python/JSON/test.json"
+    file_path = "./JSON/test.json"
     print(file_path)
     json_data = load_json_from_file(file_path)
     certificate = load_certificate(json_data)
