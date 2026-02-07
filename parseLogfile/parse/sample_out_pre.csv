@@ -1,0 +1,3 @@
+"2023-07-30 12:01:23,456",INFO,"""This is the first log message."""
+"2023-07-30 12:03:45,678",DEBUG,"""Debugging information.This line and the next should be part of the previous log message."""
+"2023-07-30 12:04:56,789",INFO,"""Another log message.This line and the next should be part of the previous log message.This line and the next should be part of the previous log message."""
