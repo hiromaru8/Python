@@ -52,10 +52,12 @@ class IntegrationTestResult(unittest.TextTestResult):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.successes = []
         self.test_results = []
 
     def addSuccess(self, test):
         super().addSuccess(test)
+        self.successes.append(test)
         self._record(test, "SUCCESS")
 
     def addFailure(self, test, err):
@@ -112,13 +114,14 @@ def main():
     duration = (end_time - start_time).total_seconds()
     
     logging.info("Ran       : %d", result.testsRun)
-    logging.info("Successes : %d", len(result.successes) if hasattr(result, 'successes') else result.testsRun - len(result.failures) - len(result.errors))  
+    logging.info("Successes : %d", len(result.successes)) 
     logging.info("Failures  : %d", len(result.failures))
     logging.info("Errors    : %d", len(result.errors))
     logging.info("Total Duration  : %.3f sec", duration)
     logging.info("=== Integration Test End ===")
     
-    output_path = ResultCollector.save_json(args.report)
+    output_path = ResultCollector.save_json(
+        filename=args.report)
     print(f"JSON report saved to: {output_path}")
 
     # 終了コードの設定
