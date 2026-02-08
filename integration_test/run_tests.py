@@ -1,0 +1,74 @@
+import json
+import logging
+import sys
+import unittest
+from pathlib import Path
+
+from src.utils.logger import setup_logger
+
+
+BASE_DIR = Path(__file__).parent
+
+
+def load_test_selection():
+    path = BASE_DIR / "config" / "test_selection.json"
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    return data
+
+def iter_testcases(suite):
+    for item in suite:
+        if isinstance(item, unittest.TestSuite):
+            yield from iter_testcases(item)
+        else:
+            yield item
+
+def discover_and_filter_tests(selected_ids):
+    loader = unittest.TestLoader()
+    discovered = loader.discover("tests")
+
+    suite = unittest.TestSuite()
+
+    for test_case in iter_testcases(discovered):
+        test_class = test_case.__class__
+        test_id = getattr(test_class, "TEST_ID", None)
+
+        if test_id in selected_ids:
+            suite.addTest(test_case)
+
+    return suite
+
+
+
+def main():
+    setup_logger()
+
+    selection = load_test_selection()
+    selected_ids = set(selection.get("execute", []))
+
+    logging.info("=== Integration Test Start ===")
+    logging.info("Tester: %s", selection.get("tester"))
+    logging.info("Target Version: %s", selection.get("target_version"))
+    logging.info("Selected IDs: %s", sorted(selected_ids))
+
+    suite = discover_and_filter_tests(selected_ids)
+
+    if suite.countTestCases() == 0:
+        logging.warning("No test cases selected.")
+        print("No test cases selected.")
+        sys.exit(1)
+
+    runner = unittest.TextTestRunner(verbosity=2)
+    result = runner.run(suite)
+
+    logging.info("Ran: %d", result.testsRun)
+    logging.info("Failures: %d", len(result.failures))
+    logging.info("Errors: %d", len(result.errors))
+    logging.info("=== Integration Test End ===")
+
+    if not result.wasSuccessful():
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

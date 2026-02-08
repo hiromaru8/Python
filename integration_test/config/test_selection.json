@@ -1,0 +1,8 @@
+{
+  "tester": "QA 山田",
+  "target_version": "v1.0.0",
+  "execute": [
+    "IT-001",
+    "IT-002"
+  ]
+}

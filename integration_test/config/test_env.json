@@ -1,0 +1,7 @@
+{
+  "environment": "DEV",
+  "api": {
+    "base_url": "http://localhost:8080",
+    "timeout": 5
+  }
+}
