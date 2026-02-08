@@ -1,3 +1,4 @@
+# result_collector.py
 import json
 import hashlib
 import platform
@@ -34,12 +35,16 @@ class ResultCollector:
             filename = f"integration_result_{timestamp}.json"
 
         output = {
+            "meta" : {
             "generated_at": datetime.now().isoformat(),
-            "environment": cls._get_environment_info(),
+            "environment": cls._get_environment_info()
+            },
+            "summary": {
             "total"     : len(cls.results),
             "success"   : len([r for r in cls.results if r["status"] == "SUCCESS"]),
             "fail"      : len([r for r in cls.results if r["status"] == "FAIL"]),
             "error"     : len([r for r in cls.results if r["status"] == "ERROR"]),
+            },
             "results"   : cls.results
         }
 
