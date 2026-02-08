@@ -58,8 +58,8 @@ class IntegrationTestResult(unittest.TextTestResult):
         self.collector = collector
 
     def startTest(self, test):
-        super().startTest(test)
         test._start_time = time.perf_counter()
+        super().startTest(test)
 
     def addSuccess(self, test):
         duration = self._calc_duration(test)
@@ -89,17 +89,22 @@ class IntegrationTestResult(unittest.TextTestResult):
             exception_type = exc_type.__name__
             error_message = str(exc_value)
             traceback_text = self._exc_info_to_string(err, test)
-
-        self.collector.add_result({
-            "test_id": getattr(test.__class__, "TEST_ID", None),
-            "class": test.__class__.__name__,
-            "method": test._testMethodName,
-            "status": status,
-            "duration_sec": duration,
-            "exception_type": exception_type,
-            "error_message": error_message,
-            "traceback": traceback_text
-        })
+            
+        test_id = getattr(test.__class__, "TEST_ID", None)
+        if not test_id:
+            raise ValueError(f"{test.__class__.__name__} has no TEST_ID")
+        
+        if self.collector:
+            self.collector.add_result({
+                "test_id": test_id,
+                "class": test.__class__.__name__,
+                "method": test._testMethodName,
+                "status": status,
+                "duration_sec": duration,
+                "exception_type": exception_type,
+                "error_message": error_message,
+                "traceback": traceback_text
+            })
 
 
 def main():

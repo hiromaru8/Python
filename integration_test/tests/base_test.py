@@ -2,8 +2,6 @@
 import unittest
 import logging
 import time
-import re
-from tests.result_collector import ResultCollector
 
 class TestLoggerAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
