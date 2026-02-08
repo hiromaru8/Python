@@ -1,4 +1,5 @@
 import json
+import hashlib
 from pathlib import Path
 from datetime import datetime
 
@@ -32,8 +33,11 @@ class ResultCollector:
 
         output = {
             "generated_at": datetime.now().isoformat(),
-            "total": len(cls.results),
-            "results": cls.results
+            "total"     : len(cls.results),
+            "success"   : len([r for r in cls.results if r["status"] == "SUCCESS"]),
+            "fail"      : len([r for r in cls.results if r["status"] == "FAIL"]),
+            "error"     : len([r for r in cls.results if r["status"] == "ERROR"]),
+            "results"   : cls.results
         }
 
         output_path = report_dir / filename
@@ -41,4 +45,23 @@ class ResultCollector:
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(output, f, indent=4, ensure_ascii=False)
 
+        # ハッシュ生成
+        hash_value = cls._generate_sha256(output_path)
+
+        # ハッシュ保存
+        with open(str(output_path) + ".sha256", "w", encoding="utf-8") as f:
+            f.write(hash_value)
+
         return output_path
+
+
+    @staticmethod
+    def _generate_sha256(file_path):
+        sha256 = hashlib.sha256()
+
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                sha256.update(chunk)
+
+        return sha256.hexdigest()
+    

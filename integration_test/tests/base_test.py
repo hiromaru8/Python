@@ -40,9 +40,9 @@ class BaseIntegrationTest(unittest.TestCase):
         # 成功/失敗/エラー判定
         status = "SUCCESS"
         if hasattr(self, "_outcome"):
-            result = self._outcome.result
-            errors = result.errors
-            failures = result.failures
+            result      = self._outcome.result
+            errors      = result.errors
+            failures    = result.failures
 
             # エラー・失敗の確認
             # エラーの確認
