@@ -102,9 +102,10 @@ def main():
     result = runner.run(suite)
     save_json_report(result)
     
-    logging.info("Ran: %d", result.testsRun)
-    logging.info("Failures: %d", len(result.failures))
-    logging.info("Errors: %d", len(result.errors))
+    logging.info("Ran       : %d", result.testsRun)
+    logging.info("Successes : %d", len(result.successes) if hasattr(result, 'successes') else result.testsRun - len(result.failures) - len(result.errors))  
+    logging.info("Failures  : %d", len(result.failures))
+    logging.info("Errors    : %d", len(result.errors))
     logging.info("=== Integration Test End ===")
 
     if not result.wasSuccessful():
