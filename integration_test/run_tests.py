@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 from src.utils.logger import setup_logger
-
+from tests.result_collector import ResultCollector
 
 BASE_DIR = Path(__file__).parent
 
@@ -65,18 +65,6 @@ class IntegrationTestResult(unittest.TextTestResult):
             "status": status
         })
 
-def save_json_report(result_obj):
-    report = {
-        "timestamp": datetime.datetime.now().isoformat(),
-        "total": result_obj.testsRun,
-        "results": result_obj.test_results
-    }
-
-    output_path = Path("reports") / "result.json"
-
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=4, ensure_ascii=False)
-
 def main():
     setup_logger()
 
@@ -100,13 +88,15 @@ def main():
                 resultclass=IntegrationTestResult
                 )
     result = runner.run(suite)
-    save_json_report(result)
     
     logging.info("Ran       : %d", result.testsRun)
     logging.info("Successes : %d", len(result.successes) if hasattr(result, 'successes') else result.testsRun - len(result.failures) - len(result.errors))  
     logging.info("Failures  : %d", len(result.failures))
     logging.info("Errors    : %d", len(result.errors))
     logging.info("=== Integration Test End ===")
+    
+    ResultCollector.save_json()
+    print("Test results saved to 'reports/result.json'.")
 
     if not result.wasSuccessful():
         sys.exit(1)
