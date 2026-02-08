@@ -3,6 +3,7 @@ import datetime
 import logging
 import sys
 import unittest
+import argparse
 from pathlib import Path
 
 from src.utils.logger import setup_logger
@@ -66,6 +67,13 @@ class IntegrationTestResult(unittest.TextTestResult):
         })
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--report", "-r",
+        help="Output JSON report filename (e.g. result.json)"
+    )
+    args = parser.parse_args()    
+    
     setup_logger()
 
     selection = load_test_selection()
@@ -95,8 +103,8 @@ def main():
     logging.info("Errors    : %d", len(result.errors))
     logging.info("=== Integration Test End ===")
     
-    ResultCollector.save_json()
-    print("Test results saved to 'reports/result.json'.")
+    output_path = ResultCollector.save_json(args.report)
+    print(f"JSON report saved to: {output_path}")
 
     if not result.wasSuccessful():
         sys.exit(1)

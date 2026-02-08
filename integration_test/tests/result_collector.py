@@ -16,7 +16,7 @@ class ResultCollector:
         cls.results.append(result)
 
     @classmethod
-    def save_json(cls):
+    def save_json(cls, filename=None):
         """
             JSON fileに結果を保存する。
         
@@ -25,11 +25,20 @@ class ResultCollector:
         report_dir = Path("reports")
         report_dir.mkdir(exist_ok=True)
 
+        # デフォルトファイル名
+        if not filename:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"integration_result_{timestamp}.json"
+
         output = {
-            "generated_at"  : datetime.now().isoformat(),
-            "total"         : len(cls.results),
-            "results"       : cls.results
+            "generated_at": datetime.now().isoformat(),
+            "total": len(cls.results),
+            "results": cls.results
         }
 
-        with open(report_dir / "result.json", "w", encoding="utf-8") as f:
+        output_path = report_dir / filename
+
+        with open(output_path, "w", encoding="utf-8") as f:
             json.dump(output, f, indent=4, ensure_ascii=False)
+
+        return output_path
