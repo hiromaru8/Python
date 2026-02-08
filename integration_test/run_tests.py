@@ -14,8 +14,13 @@ BASE_DIR = Path(__file__).parent
 
 def load_test_selection():
     path = BASE_DIR / "config" / "test_selection.json"
-    with open(path, encoding="utf-8") as f:
-        data = json.load(f)
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        logging.warning("test_selection.json not found.")
+        data = {}
+        
     return data
 
 def iter_testcases(suite):
@@ -35,8 +40,11 @@ def discover_and_filter_tests(selected_ids):
         test_class = test_case.__class__
         test_id = getattr(test_class, "TEST_ID", None)
 
-        if test_id in selected_ids:
+        # 選択されたIDに基づいてフィルタリング
+        # selected_idsが空の場合は全て実行
+        if not selected_ids or test_id in selected_ids:
             suite.addTest(test_case)
+
 
     return suite
 
@@ -84,6 +92,9 @@ def main():
     logging.info("Target Version: %s", selection.get("target_version"))
     logging.info("Selected IDs: %s", sorted(selected_ids))
 
+
+    start_time = datetime.datetime.now()
+    
     suite = discover_and_filter_tests(selected_ids)
 
     if suite.countTestCases() == 0:
@@ -97,15 +108,20 @@ def main():
                 )
     result = runner.run(suite)
     
+    end_time = datetime.datetime.now()
+    duration = (end_time - start_time).total_seconds()
+    
     logging.info("Ran       : %d", result.testsRun)
     logging.info("Successes : %d", len(result.successes) if hasattr(result, 'successes') else result.testsRun - len(result.failures) - len(result.errors))  
     logging.info("Failures  : %d", len(result.failures))
     logging.info("Errors    : %d", len(result.errors))
+    logging.info("Total Duration  : %.3f sec", duration)
     logging.info("=== Integration Test End ===")
     
     output_path = ResultCollector.save_json(args.report)
     print(f"JSON report saved to: {output_path}")
 
+    # 終了コードの設定
     if not result.wasSuccessful():
         sys.exit(1)
 
