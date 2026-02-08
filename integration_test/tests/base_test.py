@@ -1,16 +1,28 @@
 import unittest
 import logging
 
+
+class TestLoggerAdapter(logging.LoggerAdapter):
+    def process(self, msg, kwargs):
+        return f"[{self.extra['test_id']}] {msg}", kwargs
+
+
 class BaseIntegrationTest(unittest.TestCase):
+    """ Base class for integration tests.
 
-    TEST_ID = None
+    """
 
+    TEST_ID = ""
+
+    # メソッドごとにセットアップ
     def setUp(self):
-        # 実際のテストクラスのモジュール名でロガーを作る
-        self.logger = logging.getLogger(
-                        f"{self.__class__.__module__}.{self.__class__.__name__}.{self._testMethodName}")
-    def log_start(self):
-        self.logger.info("[%s] START", self.TEST_ID)
+        base_logger = logging.getLogger(self.__class__.__module__)
+        self.logger = TestLoggerAdapter(
+            base_logger,
+            {"test_id": self.TEST_ID}
+        )
+        self.logger.info("START")
 
-    def log_end(self):
-        self.logger.info("[%s] END", self.TEST_ID)
+    # メソッドごとにティアダウン（後処理）
+    def tearDown(self):
+        self.logger.info("END")

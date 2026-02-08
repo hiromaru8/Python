@@ -18,12 +18,10 @@ class TestUserFlow(BaseIntegrationTest):
         )
 
     def test_user_registration_flow(self):
-        self.log_start()
 
         result = {"status": "ok"}
         self.assertEqual(result["status"], "ok")
 
-        self.log_end()
         
 
         
