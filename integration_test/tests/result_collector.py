@@ -1,5 +1,7 @@
 import json
 import hashlib
+import platform
+import sys
 from pathlib import Path
 from datetime import datetime
 
@@ -33,6 +35,7 @@ class ResultCollector:
 
         output = {
             "generated_at": datetime.now().isoformat(),
+            "environment": cls._get_environment_info(),
             "total"     : len(cls.results),
             "success"   : len([r for r in cls.results if r["status"] == "SUCCESS"]),
             "fail"      : len([r for r in cls.results if r["status"] == "FAIL"]),
@@ -64,4 +67,18 @@ class ResultCollector:
                 sha256.update(chunk)
 
         return sha256.hexdigest()
-    
+
+
+    @staticmethod
+    def _get_environment_info():
+        return {
+            "os": platform.system(),
+            "os_version": platform.version(),
+            "platform": platform.platform(),
+            "hostname": platform.node(),
+            "cpu": platform.processor(),
+            "python_version": platform.python_version(),
+            "python_implementation": platform.python_implementation(),
+            "python_executable": sys.executable
+        }
+
