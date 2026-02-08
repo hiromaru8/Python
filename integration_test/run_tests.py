@@ -1,4 +1,5 @@
 import json
+import datetime
 import logging
 import sys
 import unittest
@@ -38,7 +39,43 @@ def discover_and_filter_tests(selected_ids):
 
     return suite
 
+class IntegrationTestResult(unittest.TextTestResult):
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.test_results = []
+
+    def addSuccess(self, test):
+        super().addSuccess(test)
+        self._record(test, "SUCCESS")
+
+    def addFailure(self, test, err):
+        super().addFailure(test, err)
+        self._record(test, "FAIL")
+
+    def addError(self, test, err):
+        super().addError(test, err)
+        self._record(test, "ERROR")
+
+    def _record(self, test, status):
+        test_id = getattr(test.__class__, "TEST_ID", None)
+        self.test_results.append({
+            "test_id": test_id,
+            "test_name": test.id(),
+            "status": status
+        })
+
+def save_json_report(result_obj):
+    report = {
+        "timestamp": datetime.datetime.now().isoformat(),
+        "total": result_obj.testsRun,
+        "results": result_obj.test_results
+    }
+
+    output_path = Path("reports") / "result.json"
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, indent=4, ensure_ascii=False)
 
 def main():
     setup_logger()
@@ -58,9 +95,13 @@ def main():
         print("No test cases selected.")
         sys.exit(1)
 
-    runner = unittest.TextTestRunner(verbosity=2)
+    runner = unittest.TextTestRunner(
+                verbosity=2,
+                resultclass=IntegrationTestResult
+                )
     result = runner.run(suite)
-
+    save_json_report(result)
+    
     logging.info("Ran: %d", result.testsRun)
     logging.info("Failures: %d", len(result.failures))
     logging.info("Errors: %d", len(result.errors))
