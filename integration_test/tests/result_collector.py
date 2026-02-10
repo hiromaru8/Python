@@ -15,9 +15,9 @@ class ResultCollector:
     def add_result(self, result):
         self.results.append(result)
 
-    def save_json(self, filename=None):
+    def save_json(self, filename="result.json", output_dir="reports"):
         
-        report_dir = Path("reports")
+        report_dir = Path(output_dir)
         report_dir.mkdir(exist_ok=True)
 
         # デフォルトファイル名

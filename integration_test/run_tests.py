@@ -141,13 +141,24 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--report", "-r",
+        default="result.json",
         help="Output JSON report filename (e.g. result.json)"
     )
+    parser.add_argument(
+    "--output-dir",
+    default="reports",
+    help="Directory to save test report"
+    )
+    parser.add_argument(
+        "--log-file",
+        default="integration_test.log",
+        help="Log file name"
+    )    
     args = parser.parse_args()    
     
     # ロガーの設定
-    setup_logger()
-
+    setup_logger(filename=args.log_file, output_dir=args.output_dir)
+    
     # テスト選択の読み込み
     selection = load_test_selection()
     selected_ids = set(selection.get("execute", []))
