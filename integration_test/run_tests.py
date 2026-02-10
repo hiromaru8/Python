@@ -206,7 +206,7 @@ def main():
     logging.info("=== Integration Test End ===")
     
     # 結果のJSON保存
-    output_path = collector.save_json(filename=args.report)
+    output_path = collector.save_json(filename=args.report, output_dir=args.output_dir)
     print(f"JSON report saved to: {output_path}")
 
     # 終了コードの設定
